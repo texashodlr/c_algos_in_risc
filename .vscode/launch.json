@@ -4,7 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
         {
             "type": "venus",
             "request": "launch",
@@ -22,6 +21,15 @@
                 "x": 10,
                 "y": 10
             }
+        }
+        {
+            "type": "venus",
+            "request": "launch",
+            "name": "Launch with no views",
+            "program": "${file}",
+            "stopOnEntry": true,
+            "stopAtBreakpoints": true,
+            "openViews": []
         }
     ]
 }

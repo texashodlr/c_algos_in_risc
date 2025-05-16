@@ -43,18 +43,26 @@ loop:
 
 _found:
     # print "Found at index" - Env call 11
-    la a0, found
-    li a7, 4
+    # la a0, found
+    # li a7, 4
+    # ecall
+    la a1, found
+    li a0, 4
+    ecall
+
+    la a1, newline
+    li a0, 4
     ecall
     
+
     # Load index 
-    mv a0, t0
-    li a7, 1
+    mv a1, t0
+    li a0, 1
     ecall
 
     # Print newline
-    la a0, newline
-    li a7, 4
+    la a1, newline
+    li a0, 4
     ecall
 
     j end
@@ -62,11 +70,12 @@ _found:
 not_found:
     # print "Not found at index" - Env call 11
     la a0, notfound
-    li a7, 4
+    li a1, 4
     ecall
     j end
 
 end:
     # Exit
-    li a7, 10
+    li a0, 10
     ecall
+    
