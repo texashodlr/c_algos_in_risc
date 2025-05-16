@@ -12,7 +12,7 @@
 
 .data
 arr: .word 14, 67, 23, 89, 45       # Array of integers
-search: .word 23                    # What we're searching for
+search: .word 45                    # What we're searching for
 found: .string "Found at index: "
 notfound: .string "Not found at index\n"
 newline: .string "\n"
@@ -31,40 +31,30 @@ main:
     li t4, 5        # Max iterations
 loop:
     beq t0, t4, not_found    # if i == 5, done
-
-    slli t5, t0, 2          # offset = i*4
-    add t6, t1, t5          # addr = base + offset
-    lw t2, 0(t6)            # load arr[i]
-
+    slli t5, t0, 2           # offset = i*4
+    add t6, t1, t5           # addr = base + offset
+    lw t2, 0(t6)             # load arr[i]
     beq t2, t3, _found       # if arr[i] == search
-
-    addi t0, t0, 1          # i++
+    addi t0, t0, 1           # i++
     j loop
 
 _found:
-    # print "Found at index" - Env call 11
-    # la a0, found
-    # li a7, 4
-    # ecall
+    # print "Found at index" - Env call 4
     la a1, found
     li a0, 4
     ecall
-
+    # Print new line
     la a1, newline
     li a0, 4
-    ecall
-    
-
-    # Load index 
+    ecall 
+    # Load index of where the searched word was found
     mv a1, t0
     li a0, 1
     ecall
-
     # Print newline
     la a1, newline
     li a0, 4
     ecall
-
     j end
 
 not_found:
