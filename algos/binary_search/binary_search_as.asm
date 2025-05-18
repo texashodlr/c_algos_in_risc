@@ -4,15 +4,25 @@
 # int search = 403;
 # # # # # # # # # # # # # # # # # # # # # 
 # Basic assembly Binary Search, taking a pre-sorted array of size 10, looking for a value
-# 
+# int left, right;
+# while left <= right
+#   middle = left+right /2
+##  if target = arr[middle] return middle
+##  elif target < arr[middle] right - 1;
+##  e    target > arr[middle] left + 1;
+# return -1 
 
 .data
 arr: .word 123, 132, 169, 175, 203, 206, 209, 300, 403, 777       # Array of integers
 size: .word 10                                                    # Size of the array
 search: .word 403                                                 # What we're searching for
+left: .word 0
+right: .word 0
+middle: .word 0
 foundIndex: .string "Found at index: "
 notfoundIndex: .string "Not found at index\n"
 newline: .string "\n"
+outofrange: .string "The target is greater than the array's elements!\n"
 
 # Code Section
 .text
@@ -22,13 +32,25 @@ newline: .string "\n"
 
 main: 
     # initializations
-    li t0, 0        # index i = 0
-    la t1, arr      # address of arr[0]
-    lw t3, search   # load search value
-    li t4, 5        # Max iterations
+    li t0, 0        # t0 = low (index 0 of arr)
+    la t1, arr      # t1 = arr base addr
+    lw t2, 0(t1)    # t2 = arr[0] = 123
+    lw t3, search   # t3 = search value = 403
+    lw t4, size     # t4 = size of arr = 10
+    addi t4, t4, -1   # t4 = 10 - 1 = 9
+    la t5, left
+    sw t2, 0(t5)    # Left = 123
+    slli t7, t4, 2  # t7 = 9*4 = 36 (offset)
+    add t8, t1, t7  # t8 = arr + 36 -> address of arr[9]
+    lw t10, 0(t8)   # t10 = arr[9] = 777
+    la t5, right    # t5 = address of right
+    sw t10, 0(t5)   # right = arr[9] = 777
+    bgt t3, t10, _not_in_range # If target is > arr[size-1] then its out of bounds and exits.
 loop:
-    beq t0, t4, not_found    # if i == 5, done
-    slli t5, t0, 2           # offset = i*4
+    bge left, right, not_found    # if left >= right, done
+    add t7, left, right           # Otherwise we set middle = left + right / 2
+    srli t7, t7, 1                # Divide t7 by /2 -> middle
+    slli t5, t0, 2                # offset = i*4
     add t6, t1, t5           # addr = base + offset
     lw t2, 0(t6)             # load arr[i]
     beq t2, t3, _found       # if arr[i] == search
@@ -54,8 +76,15 @@ _found:
     ecall
     j end
 
+_not_in_range:
+    # Hitting this if target is greater than the last element of the array (out of range)
+    la a0, outofrange
+    li a1, 4
+    ecall
+    j end
+
 not_found:
-    # print "Not found at index" - Env call 11
+    # Hitting this if target isn't inside of the array
     la a0, notfound
     li a1, 4
     ecall
