@@ -42,24 +42,45 @@ main:
     sw t2, 0(t5)    # Left = 123
     slli t7, t4, 2  # t7 = 9*4 = 36 (offset)
     add t8, t1, t7  # t8 = arr + 36 -> address of arr[9]
-    lw t10, 0(t8)   # t10 = arr[9] = 777
+    lw t9, 0(t8)    # t9 = arr[9] = 777
     la t5, right    # t5 = address of right
-    sw t10, 0(t5)   # right = arr[9] = 777
-    bgt t3, t10, _not_in_range # If target is > arr[size-1] then its out of bounds and exits.
+    sw t9, 0(t5)    # right = arr[9] = 777
+    bgt t3, t9, _not_in_range # If target is > arr[size-1] then its out of bounds and exits.
 loop:
-    bge left, right, not_found    # if left >= right, done
-    add t7, left, right           # Otherwise we set middle = left + right / 2
-    srli t7, t7, 1                # Divide t7 by /2 -> middle
-    slli t5, t0, 2                # offset = i*4
-    add t6, t1, t5           # addr = base + offset
-    lw t2, 0(t6)             # load arr[i]
-    beq t2, t3, _found       # if arr[i] == search
-    addi t0, t0, 1           # i++
+    bge t0, t4, not_found          # if left > right, done
+    add t10, t0, t4                # t10 = middle = left + right 
+    srli t10, t10, 1                    # Divide t10 by / 2 -> This produces an integer, now to load the arr element at that index
+    slli t11, t10, 2                    # t11 = middle*4 = offset
+    add t12, t1, t11                    # t12 = arr + middle*4 -> address of arr[middle]
+    lw t13, 0(t12)                      # t13 = arr[middle] = 175
+    beq  t3, t13, _found                # search == arr[middle]
+    blt t3, t13, _search_lt             # search < arr[middle]
+    bgt t3, t13, _search_gt             # search > arr[middle]
+    j not_found
+
+_search_lt:
+    # Perform high_bound = middle - 1
+    addi t4, t10, -1        # t4 = middle - 1 = 4 - 1 = 3 --> New upperbound index
+    slli t7, t4, 2          # t7 = 3*4 = 12 (offset)
+    add t8, t1, t7          # t8 = arr + 12 -> address of arr[9]
+    lw t9, 0(t8)            # t9 = arr[9] = 777
+    la t5, right            # t5 = address of right
+    sw t9, 0(t5)            # right = arr[9] = 777
+    j loop
+
+_search_gt:
+    # Perform low_bound = middle + 1
+    addi t0, t10, 1         # t0 = middle + 1 = 4 + 1 = 5 -> New lower bound index
+    slli t14, t0, 2         # t14 = 5*4 = 20 (offset)
+    add t15, t1, t14        # t15 = arr + 20 -> address of arr[5]
+    lw t2, 0(t15)           # t2 = arr[5] = 206
+    la t5, left            # t5 = address of right
+    sw t2, 0(t5)            # right = arr[9] = 777
     j loop
 
 _found:
     # print "Found at index" - Env call 4
-    la a1, found
+    la a1, foundIndex
     li a0, 4
     ecall
     # Print new line
@@ -67,7 +88,7 @@ _found:
     li a0, 4
     ecall 
     # Load index of where the searched word was found
-    mv a1, t0
+    mv a1, t10
     li a0, 1
     ecall
     # Print newline
