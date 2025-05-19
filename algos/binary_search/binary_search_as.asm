@@ -18,7 +18,6 @@ size: .word 10                                                    # Size of the 
 search: .word 403                                                 # What we're searching for
 left: .word 0
 right: .word 0
-middle: .word 0
 foundIndex: .string "Found at index: "
 notfoundIndex: .string "Not found at index\n"
 newline: .string "\n"
@@ -61,21 +60,21 @@ loop:
 _search_lt:
     # Perform high_bound = middle - 1
     addi t4, t10, -1        # t4 = middle - 1 = 4 - 1 = 3 --> New upperbound index
-    slli t7, t4, 2          # t7 = 3*4 = 12 (offset)
-    add t8, t1, t7          # t8 = arr + 12 -> address of arr[9]
-    lw t9, 0(t8)            # t9 = arr[9] = 777
-    la t5, right            # t5 = address of right
-    sw t9, 0(t5)            # right = arr[9] = 777
+    # slli t7, t4, 2          # t7 = 3*4 = 12 (offset)
+    # add t8, t1, t7          # t8 = arr + 12 -> address of arr[9]
+    # lw t9, 0(t8)            # t9 = arr[9] = 777
+    # la t5, right            # t5 = address of right
+    # sw t9, 0(t5)            # right = arr[9] = 777
     j loop
 
 _search_gt:
     # Perform low_bound = middle + 1
     addi t0, t10, 1         # t0 = middle + 1 = 4 + 1 = 5 -> New lower bound index
-    slli t14, t0, 2         # t14 = 5*4 = 20 (offset)
-    add t15, t1, t14        # t15 = arr + 20 -> address of arr[5]
-    lw t2, 0(t15)           # t2 = arr[5] = 206
-    la t5, left            # t5 = address of right
-    sw t2, 0(t5)            # right = arr[9] = 777
+    # slli t14, t0, 2         # t14 = 5*4 = 20 (offset)
+    # add t15, t1, t14        # t15 = arr + 20 -> address of arr[5]
+    # lw t2, 0(t15)           # t2 = arr[5] = 206
+    # la t5, left            # t5 = address of right
+    # sw t2, 0(t5)            # right = arr[9] = 777
     j loop
 
 _found:
