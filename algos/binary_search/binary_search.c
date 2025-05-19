@@ -2,7 +2,6 @@
 // (by yours truly)
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <stdbool.h>
 
 
@@ -51,12 +50,8 @@ void sort(int *arr, int size){
 
 void generate_array(int *arr, int size){
     
-    int num_ones = 0;
     for (int i = 0; i<size; i++){
         arr[i] = (rand()%99999)+1;
-        if(arr[i] == 1){
-            num_ones++;
-        }
     }
     //printf("Number of ones: %d",num_ones);
 }
